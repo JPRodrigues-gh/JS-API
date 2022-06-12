@@ -14,8 +14,20 @@ async function getStatus(e) {
     const data = await response.json();
 
     if(response.ok) {
-        console.log(data.expiry);
+        displayStatus(data);
     } else {
         throw new Error(data.error);
     }
+}
+
+function displayStatus(data) {
+    const resultTitle = document.getElementById("resultsModalTitle");
+    const resultContent = document.getElementById("results-content");
+    let title = "API Key Status";
+    let result = `<div>Your key is valid until:</div>`;
+
+    result += `<div class="key-status">${data.expiry}</div>`;
+    resultTitle.innerText = title;
+    resultContent.innerHTML = result;
+    resultsModal.show();
 }
