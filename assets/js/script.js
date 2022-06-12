@@ -15,5 +15,7 @@ async function getStatus(e) {
 
     if(response.ok) {
         console.log(data.expiry);
+    } else {
+        throw new Error(data.error);
     }
 }
