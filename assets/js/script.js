@@ -40,6 +40,7 @@ async function postForm(e) {
     if (response.ok) {
         displayErrors(data);
     } else {
+        displayException(data);
         throw new Error(data.error);
     }
 }
@@ -48,20 +49,20 @@ function displayErrors(data) {
     let heading = `JSHint Results for ${data.file}`;
 
     if (data.total_errors === 0) {
-        result = `<div class="no_errors">No errors reported!</div>`;
+        results = `<div class="no_errors">No errors reported!</div>`;
     } else {
-        result = `<div>Total errors: <span class="error_count">${data.total_errors}</span></div>`;
+        results = `<div>Total errors: <span class="error_count">${data.total_errors}</span></div>`;
         for (let error of data.error_list) {
-            result += `<div>At line <span class="line">${error.line}</span>, `;
-            result += `column <span class="column">${error.col}</span></div>`;
-            result += `<div class="error">${error.error}</div>`;
+            results += `<div>At line <span class="line">${error.line}</span>, `;
+            results += `column <span class="column">${error.col}</span></div>`;
+            results += `<div class="error">${error.error}</div>`;
         }
     }
     const resultTitle = document.getElementById("resultsModalTitle");
     const resultContent = document.getElementById("results-content");
 
     resultTitle.innerText = heading;
-    resultContent.innerHTML = result;
+    resultContent.innerHTML = results;
     resultsModal.show();
 }
 
@@ -77,19 +78,33 @@ async function getStatus(e) {
     if (response.ok) {
         displayStatus(data);
     } else {
+        displayException(data);
         throw new Error(data.error);
     }
 }
 
 function displayStatus(data) {
-    const resultTitle = document.getElementById("resultsModalTitle");
-    const resultContent = document.getElementById("results-content");
+    let resultTitle = document.getElementById("resultsModalTitle");
+    let resultContent = document.getElementById("results-content");
     let title = "API Key Status";
-    let result = `<div>Your key is valid until:</div>`;
+    let results = `<div>Your key is valid until:</div>`;
 
-    result += `<div class="key-status">${data.expiry}</div>`;
+    results += `<div class="key-status">${data.expiry}</div>`;
     resultTitle.innerText = title;
-    resultContent.innerHTML = result;
+    resultContent.innerHTML = results;
     resultsModal.show();
 
+}
+
+function displayException(data) {
+    let heading = `An Exception Occurred`;
+
+    results = `<div>The API returned status code ${data.status_code}</div>`;
+    results += `<div>Error number: <strong>${data.error_no}</strong></div>`;
+    results += `<div>Error text: <strong>${data.error}</strong></div>`;
+
+    document.getElementById("resultsModalTitle").innerText = heading;
+    document.getElementById("results-content").innerHTML = results;
+
+    resultsModal.show();
 }
